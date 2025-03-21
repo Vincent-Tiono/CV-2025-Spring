@@ -13,17 +13,48 @@ class Difference_of_Gaussian(object):
         ### TODO ####
         # Step 1: Filter images with different sigma values (5 images per octave, 2 octave in total)
         # - Function: cv2.GaussianBlur (kernel = (0, 0), sigma = self.sigma**___)
-        gaussian_images = []
-
+        first_octave = [image] + [cv2.GaussianBlur(image, (0, 0), self.sigma**i) for i in range(1, self.num_guassian_images_per_octave)]
+        # down-sample the image
+        DSImage = cv2.resize(first_octave[-1], 
+                             (image.shape[1]//2, image.shape[0]//2), 
+                             interpolation = cv2.INTER_NEAREST)
+        # filter down-sampled images in the next octave
+        second_octave = [DSImage] + [cv2.GaussianBlur(DSImage, (0, 0), self.sigma**i) for i in range(1, self.num_guassian_images_per_octave)]
+        # combine two octaves
+        gaussian_images = [first_octave, second_octave]
+        
         # Step 2: Subtract 2 neighbor images to get DoG images (4 images per octave, 2 octave in total)
         # - Function: cv2.subtract(second_image, first_image)
         dog_images = []
+        #iterate through each octave for subtraction
+        for i in range(self.num_octaves):
+            GI = gaussian_images[i]
+            dog_image = []
+            for j in range(self.num_DoG_images_per_octave):
+                dog = cv2.subtract(GI[j], GI[j+1])
+                dog_image.append(dog)
+                #save DoG images to disk
+                M, m = max(dog.flatten()), min(dog.flatten())
+                norm = (dog-m)*255/(M-m)
+                cv2.imwrite(f'testdata/DoG{i+1}-{j+1}.png', norm)
+            dog_images.append(dog_image)
 
         # Step 3: Thresholding the value and Find local extremum (local maximun and local minimum)
         #         Keep local extremum as a keypoint
-
+        keypoints = np.array([],dtype='int64').reshape((0,2))
+        for i in range(self.num_octaves):
+            dogs = np.array(dog_images[i])
+            cube = np.array([np.roll(dogs,(x,y,z),axis=(2,1,0)) for z in range(-1,2) for y in range(-1,2) for x in range(-1,2)])
+            mask = (np.absolute(dogs)>=self.threshold)&((np.min(cube,axis=0)==dogs)|(np.max(cube,axis=0)==dogs))
+            for j in range(1, self.num_DoG_images_per_octave-1):
+                m = mask[j]
+                x, y = np.meshgrid(np.arange(m.shape[1]),np.arange(m.shape[0]))
+                kp = np.stack([y[m],x[m]]).T*2 if i else np.stack([y[m],x[m]]).T
+                keypoints = np.concatenate([keypoints,kp])
+                
         # Step 4: Delete duplicate keypoints
         # - Function: np.unique
+        keypoints = np.unique(np.array(keypoints), axis = 0)
 
 
         # sort 2d-point by y, then by x

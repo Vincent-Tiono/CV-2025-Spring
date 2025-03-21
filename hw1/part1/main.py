@@ -20,7 +20,11 @@ def main():
     img = cv2.imread(args.image_path, 0).astype(np.float32)
 
     ### TODO ###
-
-
+    dog = Difference_of_Gaussian(threshold=args.threshold)
+    keypoints = dog.get_keypoints(img)
+    output_path = "keypoints_7.png"
+    plot_keypoints(img, keypoints, save_path=output_path)
+    print("Keypoints image saved at %s" % output_path)
+    
 if __name__ == '__main__':
     main()
