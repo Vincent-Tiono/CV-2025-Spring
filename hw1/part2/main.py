@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 def main():
     parser = argparse.ArgumentParser(description='main function of joint bilateral filter')
-    parser.add_argument('--image_path', default='./testdata/1.png', help='path to input image')
-    parser.add_argument('--setting_path', default='./testdata/1_setting.txt', help='path to setting file')
+    parser.add_argument('--image_path', default='./testdata/2.png', help='path to input image')
+    parser.add_argument('--setting_path', default='./testdata/2_setting.txt', help='path to setting file')
     args = parser.parse_args()
 
     img = cv2.imread(args.image_path)
