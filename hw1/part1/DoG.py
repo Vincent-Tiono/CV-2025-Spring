@@ -72,7 +72,6 @@ class Difference_of_Gaussian(object):
         # - Function: np.unique
         keypoints = np.unique(np.array(keypoints), axis = 0)
 
-
         # sort 2d-point by y, then by x
         keypoints = keypoints[np.lexsort((keypoints[:,1],keypoints[:,0]))] 
         return keypoints
