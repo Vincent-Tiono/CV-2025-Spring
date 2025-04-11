@@ -12,7 +12,6 @@ from cyvlfeat.sift.dsift import dsift
 from cyvlfeat.kmeans import kmeans
 from scipy.spatial.distance import cdist
 from time import time
-import cv2
 
 CAT = ['Kitchen', 'Store', 'Bedroom', 'LivingRoom', 'Office',
        'Industrial', 'Suburb', 'InsideCity', 'TallBuilding', 'Street',
@@ -52,10 +51,9 @@ def get_tiny_images(img_paths: str):
 
     tiny_img = []
     for path in img_paths:
-        img = cv2.imread(path)
-        img2D = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        tiny_img2D = cv2.resize(img2D, (16, 16), interpolation=cv2.INTER_AREA)
-        tiny_img1D = tiny_img2D.flatten()
+        img = Image.open(path).convert('L')  # Convert to grayscale
+        tiny_img2D = img.resize((16, 16), Image.Resampling.LANCZOS)  # LANCZOS is similar to INTER_AREA
+        tiny_img1D = np.array(tiny_img2D).flatten()
         tiny_img.append(tiny_img1D)
 
     tiny_img_feats = np.matrix(tiny_img)
