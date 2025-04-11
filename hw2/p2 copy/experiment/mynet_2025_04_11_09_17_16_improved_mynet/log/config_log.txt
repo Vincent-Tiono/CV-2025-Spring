@@ -1,0 +1,7 @@
+Experiment Name = improved_mynet
+Model Type      = mynet
+Num epochs      = 60
+Batch size      = 64
+Use adam        = True
+Learning rate   = 0.0003
+Scheduler step  = [25, 40, 50]

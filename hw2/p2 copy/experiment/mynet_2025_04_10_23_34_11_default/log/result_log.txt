@@ -1,0 +1,3 @@
+[1/50] 30.69 sec(s) Train Acc: 0.33635 | Val Acc: 0.45640 | Train Loss: 1.80513 | Val Loss: 1.53319 -> val best (acc)
+[2/50] 27.31 sec(s) Train Acc: 0.44545 | Val Acc: 0.49480 | Train Loss: 1.53073 | Val Loss: 1.43455 -> val best (acc)
+[3/50] 26.74 sec(s) Train Acc: 0.50560 | Val Acc: 0.59640 | Train Loss: 1.36667 | Val Loss: 1.14925 -> val best (acc)
